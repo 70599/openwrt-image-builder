@@ -29,7 +29,16 @@ jobs:
     - name: Set release version
       id: version
       run: |
-        echo release=$([ -n "${{ github.event.inputs.release }}" ] && echo "${{ github.event.inputs.release }}" || $(curl -sL https://api.github.com/repos/openwrt/openwrt/tags | jq -r .[0].name | cut -c2-))
+        echo release=$([ -n "${{ github.event.inputs.release }}" ] && echo "${{ github.event.inputs.release }}" || echo $(curl -sL https://api.github.com/repos/openwrt/openwrt/tags | jq -r .[0].name | cut -c2-))
+    
+    - name: Set download url
+      id: url
+      run: |
+        if [ ${{ github.event.inputs.profile }} = "r4s" ];
+        then
+        url="https://downloads.openwrt.org/releases/${{ steps.version.outputs.release }}/targets/rockchip/armv8/openwrt-imagebuilder-${{ steps.version.outputs.release }}-rockchip-armv8.Linux-x86_64.tar.xz"
+        fi
+        echo url=$url
     
     - name: Set profile name
       id: profile
@@ -38,10 +47,10 @@ jobs:
     
     - name: Build image
       run: |
-        wget -O imagebuilder.tar.xz https://downloads.openwrt.org/releases/${{ steps.version.outputs.release }}/targets/rockchip/armv8/openwrt-imagebuilder-${{ steps.version.outputs.release }}-rockchip-armv8.Linux-x86_64.tar.xz
+        wget -O imagebuilder.tar.xz ${{ steps.url.outputs.url }}
         tar -J -x -f imagebuilder.tar.xz
         cd imagebuilder
-        make image PROFILE="${{ steps.version.outputs.profile }}" PACKAGES="$(cat ../r4s/pkgs)" FILES="../r4s/files"
+        make image PROFILE="${{ steps.version.outputs.profile }}" PACKAGES="$(cat ../${{ github.event.inputs.profile }}/pkgs)" FILES="../${{ github.event.inputs.profile }}/files"
     
     - name: Organize files
       id: organize
