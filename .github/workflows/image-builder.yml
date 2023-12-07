@@ -31,7 +31,7 @@ jobs:
     - name: Set release version
       id: version
       run: |
-        echo release=$([ -n ${{ github.event.inputs.release }} ] && echo ${{ github.event.inputs.release }} || $(curl -sL https://api.github.com/repos/openwrt/openwrt/tags | jq -r .[0].name | cut -c2-)
+        echo release=$([ -n ${{ github.event.inputs.release }} ] && echo ${{ github.event.inputs.release }} || $(curl -sL https://api.github.com/repos/openwrt/openwrt/tags | jq -r .[0].name | cut -c2-))
     
     - name: Set profile name
       id: profile
