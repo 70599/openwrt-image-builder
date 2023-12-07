@@ -49,7 +49,7 @@ jobs:
       run: |
         wget -O imagebuilder.tar.xz ${{ steps.url.outputs.url }}
         tar -J -x -f imagebuilder.tar.xz
-        cd imagebuilder
+        cd openwrt-imagebuilder-*
         make image PROFILE="${{ steps.version.outputs.profile }}" PACKAGES="$(cat ../${{ github.event.inputs.profile }}/pkgs)" FILES="../${{ github.event.inputs.profile }}/files"
     
     - name: Organize files
