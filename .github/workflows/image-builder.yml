@@ -1,0 +1,58 @@
+name: Openwrt Image Builder
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Specifies the target image to build.'
+        required: true
+        default: r4s
+      release:
+        description: 'Release version.'
+        required: false
+        default:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Initialization environment
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential libncurses-dev libncursesw-dev zlib1g-dev gawk git gettext libssl-dev xsltproc rsync wget unzip python3
+        sudo apt install -y jq
+    
+    - name: Set release version
+      id: version
+      run: |
+        echo release=$([ -n ${{ github.event.inputs.release }} ] && echo ${{ github.event.inputs.release }} || $(curl -sL https://api.github.com/repos/openwrt/openwrt/tags | jq -r .[0].name | cut -c2-)
+    
+    - name: Set profile name
+      id: profile
+      run: |
+        echo profile=$([ ${{ github.event.inputs.profile }} = "r4s" ] && echo "friendlyarm_nanopi-r4s" || echo ${{ github.event.inputs.profile }})
+    
+    - name: Build image
+      run: |
+        wget -O imagebuilder.tar.xz https://downloads.openwrt.org/releases/${{ steps.version.outputs.release }}/targets/rockchip/armv8/openwrt-imagebuilder-${{ steps.version.outputs.release }}-rockchip-armv8.Linux-x86_64.tar.xz
+        tar -J -x -f imagebuilder.tar.xz
+        cd imagebuilder
+        make image PROFILE="${{ steps.version.outputs.profile }}" PACKAGES="$(cat ../r4s/pkgs)" FILES="../r4s/files"
+    
+    - name: Organize files
+      id: organize
+      run: |
+        cd imagebuilder/bin/targets/*/*
+        rm -rf packages
+        echo image_path=$(pwd)
+    
+    - name: Upload image
+      uses: actions/upload-artifact@main
+      with:
+        name: openwrt-${{ steps.version.outputs.release }}-${{ steps.version.outputs.profile }}
+        path: ${{ steps.organize.outputs.image_path }}
