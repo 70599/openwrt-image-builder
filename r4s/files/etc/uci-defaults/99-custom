@@ -1,0 +1,1 @@
+uci set network.lan.ipaddr='10.10.1.1'
