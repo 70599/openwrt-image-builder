@@ -29,7 +29,7 @@ jobs:
     - name: Set release version
       id: version
       run: |
-        echo release=$([ -n "${{ github.event.inputs.release }}" ] && echo "${{ github.event.inputs.release }}" || echo $(curl -sL https://api.github.com/repos/openwrt/openwrt/tags | jq -r .[0].name | cut -c2-))
+        echo release=$([ -n "${{ github.event.inputs.release }}" ] && echo "${{ github.event.inputs.release }}" || echo $(curl -sL https://api.github.com/repos/openwrt/openwrt/tags | jq -r .[0].name | cut -c2-)) >> $GITHUB_OUTPUT
     
     - name: Set download url
       id: url
@@ -38,12 +38,12 @@ jobs:
         then
         url="https://downloads.openwrt.org/releases/${{ steps.version.outputs.release }}/targets/rockchip/armv8/openwrt-imagebuilder-${{ steps.version.outputs.release }}-rockchip-armv8.Linux-x86_64.tar.xz"
         fi
-        echo url=$url
+        echo url=$url >> $GITHUB_OUTPUT
     
     - name: Set profile name
       id: profile
       run: |
-        echo profile=$([ ${{ github.event.inputs.profile }} = "r4s" ] && echo "friendlyarm_nanopi-r4s" || echo ${{ github.event.inputs.profile }})
+        echo profile=$([ ${{ github.event.inputs.profile }} = "r4s" ] && echo "friendlyarm_nanopi-r4s" || echo ${{ github.event.inputs.profile }}) >> $GITHUB_OUTPUT
     
     - name: Build image
       run: |
@@ -57,7 +57,7 @@ jobs:
       run: |
         cd imagebuilder/bin/targets/*/*
         rm -rf packages
-        echo image_path=$(pwd)
+        echo image_path=$(pwd) >> $GITHUB_OUTPUT
     
     - name: Upload image
       uses: actions/upload-artifact@main
