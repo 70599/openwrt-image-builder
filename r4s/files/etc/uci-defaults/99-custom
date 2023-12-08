@@ -1,3 +1,34 @@
 uci set network.lan.ipaddr='10.10.1.1'
 
-sed -i 's_downloads.openwrt.org_mirrors.tuna.tsinghua.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
+# sed -i 's_downloads.openwrt.org_mirrors.tuna.tsinghua.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
+
+uci set network.lan.ipaddr='10.10.1.1'
+
+cat << "EOF" > /etc/sysctl.d/10-naiveproxy.conf
+net.ipv4.tcp_slow_start_after_idle=0
+EOF
+
+cat << "EOF" > /etc/sysctl.d/11-br-netfilter.conf
+# disable bridge firewalling by default
+net.bridge.bridge-nf-call-arptables=0
+net.bridge.bridge-nf-call-ip6tables=0
+net.bridge.bridge-nf-call-iptables=0
+EOF
+
+cat << "EOF" > /etc/sysctl.d/11-nf-conntrack.conf
+net.netfilter.nf_conntrack_acct=1
+net.netfilter.nf_conntrack_checksum=0
+net.netfilter.nf_conntrack_tcp_timeout_established=7440
+net.netfilter.nf_conntrack_udp_timeout=60
+net.netfilter.nf_conntrack_udp_timeout_stream=180
+net.netfilter.nf_conntrack_helper=1
+EOF
+
+cat << "EOF" > /etc/sysctl.d/12-tcp-bbr.conf
+net.ipv4.tcp_congestion_control=bbr
+EOF
+
+cat << "EOF" > /etc/sysctl.d/12-udp.conf
+net.core.rmem_max=16777216
+net.core.wmem_max=16777216
+EOF

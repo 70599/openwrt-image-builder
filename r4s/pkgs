@@ -1,1 +1,1 @@
-bash ca-certificates curl -dnsmasq dnsmasq-full fish ip-full git ip6tables-extra ip6tables-mod-nat ip6tables-nft iperf3 ipset iptables-mod-tproxy luci-app-aria2 luci-app-samba4 luci-app-dockerman luci-i18n-base-zh-cn luci-i18n-aria2-zh-cn rsync jq yq wget unzip
+bash ca-certificates curl fish ip-full git ip6tables-extra ip6tables-mod-nat ip6tables-nft iperf3 ipset iptables-mod-tproxy luci-app-aria2 luci-app-samba4 luci-app-dockerman rsync jq yq wget unzip
