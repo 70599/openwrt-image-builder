@@ -8,6 +8,12 @@ on:
         description: 'Specifies the target image to build.'
         required: true
         default: r4s
+      repo:
+        type: choice
+        description: 'Source code repo'
+        options:
+        - immortalwrt
+        - openwrt
       release:
         description: 'Release version.'
         required: false
@@ -29,14 +35,14 @@ jobs:
     - name: Set release version
       id: version
       run: |
-        echo release=$([ -n "${{ github.event.inputs.release }}" ] && echo "${{ github.event.inputs.release }}" || echo $(curl -sL https://api.github.com/repos/openwrt/openwrt/tags | jq -r .[0].name | cut -c2-)) >> $GITHUB_OUTPUT
+        echo release=$([ -n "${{ github.event.inputs.release }}" ] && echo "${{ github.event.inputs.release }}" || echo $(curl -sL https://api.github.com/repos/${{ github.event.inputs.repo }}/${{ github.event.inputs.repo }}/tags | jq -r .[0].name | cut -c2-)) >> $GITHUB_OUTPUT
     
     - name: Set download url
       id: url
       run: |
         if [ ${{ github.event.inputs.profile }} = "r4s" ];
         then
-        url="https://downloads.openwrt.org/releases/${{ steps.version.outputs.release }}/targets/rockchip/armv8/openwrt-imagebuilder-${{ steps.version.outputs.release }}-rockchip-armv8.Linux-x86_64.tar.xz"
+        url="https://downloads.${{ github.event.inputs.repo }}.org/releases/${{ steps.version.outputs.release }}/targets/rockchip/armv8/${{ github.event.inputs.repo }}-imagebuilder-${{ steps.version.outputs.release }}-rockchip-armv8.Linux-x86_64.tar.xz"
         fi
         echo url=$url >> $GITHUB_OUTPUT
     
@@ -49,13 +55,13 @@ jobs:
       run: |
         wget -O imagebuilder.tar.xz ${{ steps.url.outputs.url }}
         tar -J -x -f imagebuilder.tar.xz
-        cd openwrt-imagebuilder-*
+        cd ${{ github.event.inputs.repo }}-imagebuilder-*
         make image PROFILE="${{ steps.version.outputs.profile }}" PACKAGES="$(cat ../${{ github.event.inputs.profile }}/pkgs)" FILES="../${{ github.event.inputs.profile }}/files"
     
     - name: Organize files
       id: organize
       run: |
-        cd imagebuilder/bin/targets/*/*
+        cd ${{ github.event.inputs.repo }}-imagebuilder-*/bin/targets/*/*
         rm -rf packages
         echo image_path=$(pwd) >> $GITHUB_OUTPUT
     
