@@ -56,6 +56,13 @@ jobs:
       run: |
         echo profile=$([ ${{ github.event.inputs.profile }} = "r4s" ] && echo "friendlyarm_nanopi-r4s" || echo ${{ github.event.inputs.profile }}) >> $GITHUB_OUTPUT
     
+    - name: Download AriaNg
+      run: |
+        wget -O ariang.zip $(curl -sL https://api.github.com/repos/mayswind/AriaNg/releases | jq -r .[0].assets[0].browser_download_url)
+        unzip ariang.zip
+        mkdir -p ${{ github.event.inputs.profile }}/files/www/ariang
+        mv index.html ${{ github.event.inputs.profile }}/files/www/ariang/
+    
     - name: Build image
       run: |
         wget -O imagebuilder.tar.xz ${{ steps.url.outputs.url }}
