@@ -6,7 +6,7 @@ uci set uhttpd.main.listen_http='88'
 uci commit uhttpd
 service uhttpd restart
 
-chsh --shell /usr/bin/fish
+sed -i 's|/bin/ash|/usr/bin/fish|' /etc/passwd
 
 # sed -i 's_downloads.openwrt.org_mirrors.tuna.tsinghua.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
 
