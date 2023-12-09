@@ -1,8 +1,8 @@
 uci set network.lan.ipaddr='10.10.1.1'
 
-# sed -i 's_downloads.openwrt.org_mirrors.tuna.tsinghua.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
+chsh --shell /usr/bin/fish
 
-uci set network.lan.ipaddr='10.10.1.1'
+# sed -i 's_downloads.openwrt.org_mirrors.tuna.tsinghua.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
 
 cat << "EOF" > /etc/sysctl.d/10-naiveproxy.conf
 net.ipv4.tcp_slow_start_after_idle=0

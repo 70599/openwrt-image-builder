@@ -73,5 +73,5 @@ jobs:
     - name: Upload image
       uses: actions/upload-artifact@main
       with:
-        name: openwrt-${{ steps.version.outputs.release }}-${{ steps.version.outputs.profile }}
+        name: openwrt-${{ steps.version.outputs.release }}-${{ steps.profile.outputs.profile }}
         path: ${{ steps.organize.outputs.image_path }}
