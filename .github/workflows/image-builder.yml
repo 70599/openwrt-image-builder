@@ -18,6 +18,10 @@ on:
         description: 'Release version.'
         required: false
         default:
+      rootfs_partsize:
+        description: 'rootfs partition size.'
+        required: true
+        default: 512
 
 jobs:
   build:
@@ -56,7 +60,7 @@ jobs:
         wget -O imagebuilder.tar.xz ${{ steps.url.outputs.url }}
         tar -J -x -f imagebuilder.tar.xz
         cd ${{ github.event.inputs.repo }}-imagebuilder-*
-        make image PROFILE="${{ steps.profile.outputs.profile }}" PACKAGES="$(cat ../${{ github.event.inputs.profile }}/pkgs)" FILES="../${{ github.event.inputs.profile }}/files"
+        make image PROFILE="${{ steps.profile.outputs.profile }}" PACKAGES="$(cat ../${{ github.event.inputs.profile }}/pkgs)" FILES="../${{ github.event.inputs.profile }}/files" ROOTFS_PARTSIZE=${{ github.event.inputs.rootfs_partsize }}
     
     - name: Organize files
       id: organize
