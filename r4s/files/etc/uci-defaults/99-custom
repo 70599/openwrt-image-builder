@@ -5,6 +5,9 @@ uci commit system
 ntpd -q -p 120.25.108.11
 
 uci set network.lan.ipaddr='10.10.1.1'
+uci set network.wan6.device='@wan'
+uci set network.wan.peerdns='0'
+uci set network.wan6.peerdns='0'
 uci commit network
 service network restart
 
@@ -13,6 +16,7 @@ uci commit uhttpd
 service uhttpd restart
 
 sed -i 's|/bin/ash|/usr/bin/fish|' /etc/passwd
+grep -q 'singbox_tproxy' /etc/passwd || echo 'singbox_tproxy:x:0:23333:::' >> /etc/passwd
 
 # sed -i 's_downloads.openwrt.org_mirrors.tuna.tsinghua.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
 
@@ -35,6 +39,8 @@ net.netfilter.nf_conntrack_udp_timeout=60
 net.netfilter.nf_conntrack_udp_timeout_stream=180
 net.netfilter.nf_conntrack_helper=1
 EOF
+
+rm -rf /etc/sysctl.d/12-br-netfilter-ip.conf
 
 cat << "EOF" > /etc/sysctl.d/12-tcp-bbr.conf
 net.ipv4.tcp_congestion_control=bbr

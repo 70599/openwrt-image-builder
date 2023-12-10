@@ -84,7 +84,7 @@ jobs:
     - name: Upload image
       uses: actions/upload-artifact@main
       with:
-        name: ${{ github.event.inputs.repo }}-${{ steps.profile.outputs.profile }}-${{ steps.version.outputs.release }}@${{ steps.organize.outputs.date }}
+        name: ${{ github.event.inputs.repo }}-${{ github.event.inputs.profile }}-${{ steps.version.outputs.release }}@${{ steps.organize.outputs.date }}
         path: ${{ steps.organize.outputs.image_path }}
     
     - name: Send complete notification
