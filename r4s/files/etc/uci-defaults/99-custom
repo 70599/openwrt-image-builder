@@ -16,6 +16,8 @@ uci set uhttpd.main.listen_http='88'
 uci commit uhttpd
 service uhttpd restart
 
+sed -i 's|mirrors.vsean.net/openwrt|downloads.immortalwrt.org|' /etc/opkg/distfeeds.conf
+
 #fix "errorCode=1 OSSL_PROVIDER_load 'legacy' failed"
 grep -q '"/usr/lib"' /etc/init.d/aria2 || sed -i '/procd_add_jail "$NAME.$section" log/a 	procd_add_jail_mount "/usr/lib"' /etc/init.d/aria2
 service aria2 status && service aria2 restart
