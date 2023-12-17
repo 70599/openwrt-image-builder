@@ -1,4 +1,5 @@
-uci set system.ntp.server='120.25.108.11'
+uci -q del system.ntp.server
+uci add_list system.ntp.server='120.25.108.11'
 uci add_list system.ntp.server='120.25.115.20'
 uci add_list system.ntp.server='119.29.26.206'
 uci commit system
