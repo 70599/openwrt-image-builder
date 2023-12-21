@@ -19,10 +19,6 @@ service uhttpd restart
 
 sed -i 's|mirrors.vsean.net/openwrt|downloads.immortalwrt.org|' /etc/opkg/distfeeds.conf
 
-#fix "errorCode=1 OSSL_PROVIDER_load 'legacy' failed"
-grep -q '"/usr/lib"' /etc/init.d/aria2 || sed -i '/procd_add_jail "$NAME.$section" log/a 	procd_add_jail_mount "/usr/lib"' /etc/init.d/aria2
-service aria2 status && service aria2 restart
-
 sed -i 's|/bin/ash|/usr/bin/fish|' /etc/passwd
 grep -q 'op' /etc/passwd || echo 'op:x:6881:6881:::/bin/false' >> /etc/passwd
 grep -q 'singbox_tproxy' /etc/passwd || echo 'singbox_tproxy:x:0:23333:::/bin/false' >> /etc/passwd
