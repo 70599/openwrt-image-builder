@@ -13,10 +13,6 @@ uci del network.globals.ula_prefix
 uci commit network
 service network restart
 
-uci set uhttpd.main.listen_http='88'
-uci commit uhttpd
-service uhttpd restart
-
 sed -i 's|mirrors.vsean.net/openwrt|downloads.immortalwrt.org|' /etc/opkg/distfeeds.conf
 # sed -i 's_downloads.openwrt.org_mirrors.tuna.tsinghua.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
 
