@@ -5,9 +5,11 @@ on:
   workflow_dispatch:
     inputs:
       profile:
+        type: choice
         description: 'Specifies the target image to build.'
-        required: true
-        default: r4s
+        options:
+        - r4s
+        - x86
       repo:
         type: choice
         description: 'Source code repo'
@@ -47,16 +49,17 @@ jobs:
     - name: Set download url
       id: url
       run: |
-        if [ ${{ github.event.inputs.profile }} = "r4s" ];
-        then
-        url="https://downloads.${{ github.event.inputs.repo }}.org/releases/${{ steps.version.outputs.release }}/targets/rockchip/armv8/${{ github.event.inputs.repo }}-imagebuilder-${{ steps.version.outputs.release }}-rockchip-armv8.Linux-x86_64.tar.xz"
+        if [ ${{ github.event.inputs.profile }} = "r4s" ]; then
+          url="https://downloads.${{ github.event.inputs.repo }}.org/releases/${{ steps.version.outputs.release }}/targets/rockchip/armv8/${{ github.event.inputs.repo }}-imagebuilder-${{ steps.version.outputs.release }}-rockchip-armv8.Linux-x86_64.tar.xz"
+        elif [ ${{ github.event.inputs.profile }} = "x86" ]; then
+          url="https://downloads.${{ github.event.inputs.repo }}.org/releases/${{ steps.version.outputs.release }}/targets/x86/64/immortalwrt-imagebuilder-${{ steps.version.outputs.release }}-x86-64.Linux-x86_64.tar.xz"
         fi
         echo url=$url >> $GITHUB_OUTPUT
     
     - name: Set profile name
       id: profile
       run: |
-        echo profile=$([ ${{ github.event.inputs.profile }} = "r4s" ] && echo "friendlyarm_nanopi-r4s" || echo ${{ github.event.inputs.profile }}) >> $GITHUB_OUTPUT
+        echo profile=$([ ${{ github.event.inputs.profile }} = "r4s" ] && echo "friendlyarm_nanopi-r4s" || echo "generic") >> $GITHUB_OUTPUT
     
     - name: Download AriaNg
       run: |
