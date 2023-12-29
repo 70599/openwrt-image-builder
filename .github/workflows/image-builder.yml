@@ -80,7 +80,7 @@ jobs:
       run: |
         cd ${{ github.event.inputs.repo }}-imagebuilder-*/bin/targets/*/*
         rm -rf packages
-        rm -rf *ext4*
+        [ ${{ github.event.inputs.profile }} = "r4s" ] && rm -rf *ext4*
         echo image_path=$(pwd) >> $GITHUB_OUTPUT
         echo date=$(date +%Y-%m-%d-%H%M) >> $GITHUB_OUTPUT
     
