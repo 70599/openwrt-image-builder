@@ -88,7 +88,7 @@ jobs:
           echo image_path=$(pwd) >> $GITHUB_OUTPUT
         fi
         if [ ${{ github.event.inputs.profile }} = "x86" ]; then
-          echo image_path=$(pwd)/${{ github.event.inputs.repo }}-${{ steps.version.outputs.release }}-x86-64-generic-{ext4,squashfs}-combined-efi.img.gz >> $GITHUB_OUTPUT
+          echo image_path=$(pwd)/${{ github.event.inputs.repo }}-${{ steps.version.outputs.release }}-x86-64-generic-*-combined-efi.img.gz >> $GITHUB_OUTPUT
         fi
         echo date=$(date +%Y-%m-%d-%H%M) >> $GITHUB_OUTPUT
     
