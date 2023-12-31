@@ -1,19 +1,26 @@
-uci set system.@system[0].hostname='DSWrt'
-uci set system.@imm_init[0].opkg_mirror='https://downloads.immortalwrt.org'
-uci del system.ntp.server
-uci add_list system.ntp.server='120.25.108.11'
-uci add_list system.ntp.server='120.25.115.20'
-uci add_list system.ntp.server='119.29.26.206'
-uci commit system
+uci -q batch <<-EOF
+	set system.@system[0].hostname='DSWrt'
+	set system.@system[0].timezone='CST-8'
+	set system.@system[0].zonename='Asia/Shanghai'
+	set system.@imm_init[0].system_chn='1'
+	set system.@imm_init[0].opkg_mirror='https://downloads.immortalwrt.org'
+	del system.ntp.server
+	add_list system.ntp.server='120.25.108.11'
+	add_list system.ntp.server='120.25.115.20'
+	add_list system.ntp.server='119.29.26.206'
+	commit system
+EOF
 service system restart
 ntpd -q -p 120.25.108.11
 
-uci set network.lan.ipaddr='10.10.10.1'
-uci set network.wan6.device='@wan'
-uci set network.wan.peerdns='0'
-uci set network.wan6.peerdns='0'
-uci del network.globals.ula_prefix
-uci commit network
+uci -q batch <<-EOF
+	set network.lan.ipaddr='10.10.10.1'
+	set network.wan6.device='@wan'
+	set network.wan.peerdns='0'
+	set network.wan6.peerdns='0'
+	del network.globals.ula_prefix
+	commit network
+EOF
 service network restart
 
 ln -sf /etc/opkg/distfeeds.conf.bak /etc/opkg/distfeeds.conf
