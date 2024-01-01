@@ -1,29 +1,38 @@
 uci -q batch <<-EOF
-	set system.@system[0].hostname='DSWrt'
-	set system.@system[0].timezone='CST-8'
-	set system.@system[0].zonename='Asia/Shanghai'
-	set system.@imm_init[0].system_chn='1'
-	set system.@imm_init[0].opkg_mirror='https://downloads.immortalwrt.org'
-	del system.ntp.server
-	add_list system.ntp.server='120.25.108.11'
-	add_list system.ntp.server='120.25.115.20'
-	add_list system.ntp.server='119.29.26.206'
-	commit system
+set system.@system[0].hostname='DS220+'
+set system.@system[0].timezone='CST-8'
+set system.@system[0].zonename='Asia/Shanghai'
+set system.@imm_init[0].system_chn='1'
+set system.@imm_init[0].opkg_mirror='https://downloads.immortalwrt.org'
+del system.ntp.server
+add_list system.ntp.server='120.25.108.11'
+add_list system.ntp.server='120.25.115.20'
+add_list system.ntp.server='119.29.26.206'
+commit system
 EOF
 service system restart
 ntpd -q -p 120.25.108.11
 
 uci -q batch <<-EOF
-	set network.lan.ipaddr='10.10.10.1'
-	set network.wan6.device='@wan'
-	set network.wan.peerdns='0'
-	set network.wan6.peerdns='0'
-	del network.globals.ula_prefix
-	commit network
+set network.lan.ipaddr='10.10.10.1'
+set network.wan.device='eth0'
+set network.@device[0].ports='eth1'
+set network.wan6.device='@wan'
+set network.wan.peerdns='0'
+set network.wan6.peerdns='0'
+del network.globals.ula_prefix
+commit network
 EOF
 service network restart
 
-ln -sf /etc/opkg/distfeeds.conf.bak /etc/opkg/distfeeds.conf
+uci -q batch <<-EOF
+del dhcp.@dnsmasq[0].resolvfile
+set dhcp.@dnsmasq[0].noresolv='1'
+commit dhcp
+EOF
+service dnsmasq restart
+
+# ln -sf /etc/opkg/distfeeds.conf.bak /etc/opkg/distfeeds.conf
 # sed -i 's_downloads.openwrt.org_mirrors.tuna.tsinghua.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
 
 sed -i 's|/bin/ash|/usr/bin/fish|' /etc/passwd
