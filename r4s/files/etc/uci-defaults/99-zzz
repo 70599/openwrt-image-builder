@@ -1,33 +1,40 @@
 uci -q batch <<-EOF
-	set system.@system[0].hostname='R4S'
-	set system.@system[0].timezone='CST-8'
-	set system.@system[0].zonename='Asia/Shanghai'
-	set system.@imm_init[0].system_chn='1'
-	set system.@imm_init[0].opkg_mirror='https://downloads.immortalwrt.org'
-	del system.ntp.server
-	add_list system.ntp.server='120.25.108.11'
-	add_list system.ntp.server='120.25.115.20'
-	add_list system.ntp.server='119.29.26.206'
-	commit system
+set system.@system[0].hostname='R4S'
+set system.@system[0].timezone='CST-8'
+set system.@system[0].zonename='Asia/Shanghai'
+set system.@imm_init[0].system_chn='1'
+set system.@imm_init[0].opkg_mirror='https://downloads.immortalwrt.org'
+del system.ntp.server
+add_list system.ntp.server='120.25.108.11'
+add_list system.ntp.server='120.25.115.20'
+add_list system.ntp.server='119.29.26.206'
+commit system
 EOF
 service system restart
 ntpd -q -p 120.25.108.11
 
 uci -q batch <<-EOF
-	set network.lan.ipaddr='10.10.10.1'
-	set network.wan6.device='@wan'
-	set network.wan.peerdns='0'
-	set network.wan6.peerdns='0'
-	del network.globals.ula_prefix
-	commit network
+set network.lan.ipaddr='10.10.1.1'
+set network.wan6.device='@wan'
+set network.wan.peerdns='0'
+set network.wan6.peerdns='0'
+del network.globals.ula_prefix
+commit network
 EOF
 service network restart
+
+uci -q batch <<-EOF
+del dhcp.@dnsmasq[0].resolvfile
+set dhcp.@dnsmasq[0].noresolv='1'
+commit dhcp
+EOF
+service dnsmasq restart
 
 uci set uhttpd.main.listen_http='88'
 uci commit uhttpd
 service uhttpd restart
 
-sed -i 's|mirrors.vsean.net/openwrt|downloads.immortalwrt.org|' /etc/opkg/distfeeds.conf
+# sed -i 's|mirrors.vsean.net/openwrt|downloads.immortalwrt.org|' /etc/opkg/distfeeds.conf
 # sed -i 's_downloads.openwrt.org_mirrors.tuna.tsinghua.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
 
 sed -i 's|/bin/ash|/usr/bin/fish|' /etc/passwd
@@ -55,10 +62,6 @@ net.netfilter.nf_conntrack_helper=1
 EOF
 
 rm -rf /etc/sysctl.d/12-br-netfilter-ip.conf
-
-cat << "EOF" > /etc/sysctl.d/12-tcp-bbr.conf
-net.ipv4.tcp_congestion_control=bbr
-EOF
 
 cat << "EOF" > /etc/sysctl.d/12-udp.conf
 net.core.rmem_max=16777216

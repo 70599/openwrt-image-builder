@@ -1,5 +1,5 @@
 uci -q batch <<-EOF
-set system.@system[0].hostname='DS220+'
+set system.@system[0].hostname='DSWrt'
 set system.@system[0].timezone='CST-8'
 set system.@system[0].zonename='Asia/Shanghai'
 set system.@imm_init[0].system_chn='1'

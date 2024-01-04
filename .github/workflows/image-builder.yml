@@ -18,8 +18,10 @@ on:
         - openwrt
       release:
         description: 'Release version.'
-        required: false
-        default:
+        type: choice
+        options:
+        - snapshots
+        - latest_tag
       rootfs_partsize:
         description: 'rootfs partition size.'
         required: true
@@ -44,16 +46,22 @@ jobs:
     - name: Set release version
       id: version
       run: |
-        echo release=$([ -n "${{ github.event.inputs.release }}" ] && echo "${{ github.event.inputs.release }}" || echo $(curl -sL https://api.github.com/repos/${{ github.event.inputs.repo }}/${{ github.event.inputs.repo }}/tags | jq -r .[0].name | cut -c2-)) >> $GITHUB_OUTPUT
+        echo release=$([ ${{ github.event.inputs.release }} = "latest_tag" ] && echo "${{ github.event.inputs.release }}" || echo $(curl -sL https://api.github.com/repos/${{ github.event.inputs.repo }}/${{ github.event.inputs.repo }}/tags | jq -r .[0].name | cut -c2-)) >> $GITHUB_OUTPUT
     
     - name: Set download url
       id: url
       run: |
         if [ ${{ github.event.inputs.profile }} = "r4s" ]; then
           url="https://downloads.${{ github.event.inputs.repo }}.org/releases/${{ steps.version.outputs.release }}/targets/rockchip/armv8/${{ github.event.inputs.repo }}-imagebuilder-${{ steps.version.outputs.release }}-rockchip-armv8.Linux-x86_64.tar.xz"
+          if [ ${{ github.event.inputs.release }} = "snapshots" ]; then
+            url="https://downloads.${{ github.event.inputs.repo }}.org/${{ github.event.inputs.release }}/targets/rockchip/armv8/${{ github.event.inputs.repo }}-imagebuilder-rockchip-armv8.Linux-x86_64.tar.xz"
+          fi
         fi
         if [ ${{ github.event.inputs.profile }} = "x86" ]; then
-          url="https://downloads.${{ github.event.inputs.repo }}.org/releases/${{ steps.version.outputs.release }}/targets/x86/64/immortalwrt-imagebuilder-${{ steps.version.outputs.release }}-x86-64.Linux-x86_64.tar.xz"
+          url="https://downloads.${{ github.event.inputs.repo }}.org/releases/${{ steps.version.outputs.release }}/targets/x86/64/${{ github.event.inputs.repo }}-imagebuilder-${{ steps.version.outputs.release }}-x86-64.Linux-x86_64.tar.xz"
+          if [ ${{ github.event.inputs.release }} = "snapshots" ]; then
+            url="https://downloads.${{ github.event.inputs.repo }}.org/${{ github.event.inputs.release }}/targets/x86/64/${{ github.event.inputs.repo }}-imagebuilder-x86-64.Linux-x86_64.tar.xz"
+          fi
         fi
         echo url=$url >> $GITHUB_OUTPUT
     
