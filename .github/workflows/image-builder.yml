@@ -46,7 +46,7 @@ jobs:
     - name: Set release version
       id: version
       run: |
-        echo release=$([ ${{ github.event.inputs.release }} = "latest_tag" ] && echo "${{ github.event.inputs.release }}" || echo $(curl -sL https://api.github.com/repos/${{ github.event.inputs.repo }}/${{ github.event.inputs.repo }}/tags | jq -r .[0].name | cut -c2-)) >> $GITHUB_OUTPUT
+        echo release=$([ ${{ github.event.inputs.release }} = "latest_tag" ] && echo $(curl -sL https://api.github.com/repos/${{ github.event.inputs.repo }}/${{ github.event.inputs.repo }}/tags | jq -r .[0].name | cut -c2-) || echo "${{ github.event.inputs.release }}") >> $GITHUB_OUTPUT
     
     - name: Set download url
       id: url
