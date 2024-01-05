@@ -14,10 +14,8 @@ service system restart
 ntpd -q -p 120.25.108.11
 
 uci -q batch <<-EOF
-set network.lan.ipaddr='10.10.10.1'
-set network.wan.device='eth0'
-set network.@device[0].ports='eth1'
-set network.wan6.device='@wan'
+set network.lan.ipaddr='10.10.1.5'
+set network.lan.gateway='10.10.1.1'
 set network.wan.peerdns='0'
 set network.wan6.peerdns='0'
 del network.globals.ula_prefix
@@ -27,6 +25,7 @@ service network restart
 
 uci -q batch <<-EOF
 del dhcp.@dnsmasq[0].resolvfile
+set dhcp.lan.ignore='1'
 set dhcp.@dnsmasq[0].noresolv='1'
 commit dhcp
 EOF
@@ -60,10 +59,6 @@ net.netfilter.nf_conntrack_helper=1
 EOF
 
 rm -rf /etc/sysctl.d/12-br-netfilter-ip.conf
-
-cat << "EOF" > /etc/sysctl.d/12-tcp-bbr.conf
-net.ipv4.tcp_congestion_control=bbr
-EOF
 
 cat << "EOF" > /etc/sysctl.d/12-udp.conf
 net.core.rmem_max=16777216
