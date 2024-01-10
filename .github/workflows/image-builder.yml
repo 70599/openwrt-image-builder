@@ -82,7 +82,7 @@ jobs:
         wget -O imagebuilder.tar.xz ${{ steps.url.outputs.url }}
         tar -J -x -f imagebuilder.tar.xz
         cd ${{ github.event.inputs.repo }}-imagebuilder-*
-        make image PROFILE="${{ steps.profile.outputs.profile }}" PACKAGES="$(cat ../${{ github.event.inputs.profile }}/pkgs)" FILES="../${{ github.event.inputs.profile }}/files" ROOTFS_PARTSIZE=${{ github.event.inputs.rootfs_partsize }}
+        make image PROFILE="${{ steps.profile.outputs.profile }}" PACKAGES="$(cat ../${{ github.event.inputs.profile }}/pkgs | tr '\n' ' ')" FILES="../${{ github.event.inputs.profile }}/files" ROOTFS_PARTSIZE=${{ github.event.inputs.rootfs_partsize }}
         tree bin
     
     - name: Organize files
