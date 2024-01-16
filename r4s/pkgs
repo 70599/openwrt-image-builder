@@ -50,7 +50,6 @@ bash
 bind-dig
 ca-certificates
 cfdisk
-cifsmount
 coreutils-nohup
 curl
 ethtool
@@ -65,7 +64,6 @@ iptables-mod-socket
 iptables-mod-tproxy
 iptables-nft
 ip6tables-nft
-jq
 kmod-crypto-hmac
 kmod-crypto-md5
 kmod-crypto-misc
@@ -82,6 +80,7 @@ kmod-tun
 kmod-usb-net-rtl8152-vendor
 libopenssl-legacy
 logrotate
+lsblk
 luci-i18n-cifs-mount-zh-cn
 luci-i18n-cpulimit-zh-cn
 luci-i18n-dockerman-zh-cn
@@ -100,4 +99,3 @@ unzip
 upx
 vim
 whois
-yq
